@@ -27,7 +27,8 @@ export default function HomePage() {
   // Función para obtener los productos del backend
   async function fetchProducts() {
     try {
-      const res = await fetch('http://localhost:3000/api/products');
+      // Cambiado de 'http://localhost:3000/api/products' a '/api/products'
+      const res = await fetch('/api/products'); 
       const data = await res.json();
       setProducts(data);
     } catch (error) {
@@ -38,7 +39,8 @@ export default function HomePage() {
   // Función para obtener los productos del carrito
   async function fetchCart() {
     try {
-      const res = await fetch('http://localhost:3000/api/cart');
+      // Cambiado de 'http://localhost:3000/api/cart' a '/api/cart'
+      const res = await fetch('/api/cart'); 
       const data = await res.json();
       setCart(data);
     } catch (error) {
@@ -49,7 +51,8 @@ export default function HomePage() {
   // Función para agregar un producto al carrito (llamada desde el botón "Agregar")
   async function addToCart(productId: number) {
     try {
-      await fetch('http://localhost:3000/api/cart', {
+      // Cambiado de 'http://localhost:3000/api/cart' a '/api/cart'
+      await fetch('/api/cart', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +68,8 @@ export default function HomePage() {
   // Función para actualizar la cantidad de un producto en el carrito (llamada desde +/-)
   async function updateQuantity(productId: number, quantity: number) {
     try {
-      await fetch('http://localhost:3000/api/cart', {
+      // Cambiado de 'http://localhost:3000/api/cart' a '/api/cart'
+      await fetch('/api/cart', { 
         method: 'PUT', // Usamos el método PUT para actualizar
         headers: {
           'Content-Type': 'application/json',
@@ -175,4 +179,4 @@ export default function HomePage() {
       </section>
     </main>
   );
-}
+} 
