@@ -1,0 +1,16 @@
+###
+# @name GetProducts
+GET http://localhost:3000/api/products
+
+###
+# @name AddProductToCart
+POST http://localhost:3000/api/cart
+Content-Type: application/json
+
+{
+  "productId": 1
+}
+
+###
+# @name GetCart
+GET http://localhost:3000/api/cart

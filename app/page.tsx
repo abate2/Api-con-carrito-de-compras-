@@ -1,103 +1,178 @@
-import Image from "next/image";
+"use client"; // Directiva para indicar que es un Client Component
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+// Importación CORRECTA para findBestCombination desde utils
+import { findBestCombination } from '../utils/findBestCombination'; 
+
+// Definición de interfaces para tipado seguro
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+interface CartItem extends Product {
+  quantity: number;
+}
+
+export default function HomePage() {
+  // Estados para manejar los datos del frontend
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [bestCombination, setBestCombination] = useState<Product[]>([]);
+  
+  // Presupuesto para el ejercicio de lógica
+  const myBudget = 250; 
+
+  // Función para obtener los productos del backend
+  async function fetchProducts() {
+    try {
+      const res = await fetch('http://localhost:3000/api/products');
+      const data = await res.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error al obtener los productos:", error);
+    }
+  }
+
+  // Función para obtener los productos del carrito
+  async function fetchCart() {
+    try {
+      const res = await fetch('http://localhost:3000/api/cart');
+      const data = await res.json();
+      setCart(data);
+    } catch (error) {
+      console.error("Error al obtener el carrito:", error);
+    }
+  }
+
+  // Función para agregar un producto al carrito (llamada desde el botón "Agregar")
+  async function addToCart(productId: number) {
+    try {
+      await fetch('http://localhost:3000/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      });
+      await fetchCart(); // Actualiza el carrito en la UI después de agregar
+    } catch (error) {
+      console.error("Error al agregar producto al carrito:", error);
+    }
+  }
+
+  // Función para actualizar la cantidad de un producto en el carrito (llamada desde +/-)
+  async function updateQuantity(productId: number, quantity: number) {
+    try {
+      await fetch('http://localhost:3000/api/cart', {
+        method: 'PUT', // Usamos el método PUT para actualizar
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+      await fetchCart(); // Actualiza el carrito en la UI después de modificar
+    } catch (error) {
+      console.error("Error al actualizar la cantidad del carrito:", error);
+    }
+  }
+
+  // Primer useEffect: Carga inicial de productos y carrito
+  // Se ejecuta solo una vez al montar el componente (dependencia vacía [])
+  useEffect(() => {
+    fetchProducts();
+    fetchCart();
+  }, []); 
+
+  // Segundo useEffect: Calcula la mejor combinación cuando los productos están disponibles
+  // Se ejecuta cuando 'products' o 'myBudget' cambian.
+  useEffect(() => {
+    if (products.length > 0) { // Asegura que los productos ya se hayan cargado
+      const optimalCombination = findBestCombination(products, myBudget);
+      setBestCombination(optimalCombination);
+    }
+  }, [products, myBudget]); 
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="container mx-auto p-4">
+      <h1 className="text-4xl font-bold mb-8 text-center">Tienda de Compras</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Sección de la lista de productos disponibles */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Productos Disponibles</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {products.map((product) => (
+            <div key={product.id} className="border p-4 rounded-lg shadow">
+              <h3 className="text-xl font-bold">{product.name}</h3>
+              <p className="text-gray-600">Precio: ${product.price}</p>
+              <button 
+                onClick={() => addToCart(product.id)}
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Agregar al carrito
+              </button>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      <hr className="my-8" />
+
+      {/* Sección del carrito de compras actual */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Carrito de Compras</h2>
+        <div className="border p-4 rounded-lg shadow">
+          {cart.length === 0 ? (
+            <p>El carrito está vacío. ¡Agrega algunos productos!</p>
+          ) : (
+            <ul>
+              {cart.map((item) => (
+                <li key={item.id} className="mb-2 flex items-center justify-between">
+                  <div>
+                    {item.name} - Cantidad: {item.quantity}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
+                    >
+                      -
+                    </button>
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded"
+                    >
+                      +
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      <hr className="my-8" />
+
+      {/* Sección de la mejor combinación de productos para el presupuesto */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">Mejor Combinación para un Presupuesto de ${myBudget}</h2>
+        <div className="border p-4 rounded-lg shadow">
+          {bestCombination.length === 0 ? (
+            <p>No se encontró ninguna combinación o no hay productos.</p>
+          ) : (
+            <div>
+              <ul>
+                {bestCombination.map((product) => (
+                  <li key={product.id}>{product.name} - ${product.price}</li>
+                ))}
+              </ul>
+              <p className="mt-2 font-bold">Costo total: ${bestCombination.reduce((acc, p) => acc + p.price, 0)}</p>
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }
