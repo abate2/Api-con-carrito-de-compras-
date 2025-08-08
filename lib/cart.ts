@@ -4,7 +4,7 @@ import { products } from '../data/products';
 
 // El carrito se almacena como un objeto donde la clave es el ID del producto
 // y el valor es la cantidad.
-let cart: { [key: number]: number } = {};
+const cart: { [key: number]: number } = {};
 
 // Función para obtener los productos actuales del carrito con sus detalles completos
 export function getCart() {
