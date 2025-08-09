@@ -20,8 +20,8 @@ export const products = [
     "id": 4,
     "name": "Producto 4",
     "price": 70
-  }
-    {
+  },
+  {
     "id": 5,
     "name": "Producto 5",
     "price": 90
