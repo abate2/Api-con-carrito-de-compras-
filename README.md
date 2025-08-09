@@ -1,7 +1,7 @@
 ## API y Carrito de Compras (Prueba Técnica)
 Este proyecto es una aplicación web full-stack básica desarrollada con Next.js, React y TypeScript, que simula la  agregacion de  productos y gestión de un carrito de compras. Además, incluye una funcion  para encontrar la mejor combinación de productos dentro de un presupuesto dado.
 
-🚀 Características Principales
+## Características Principales
 Backend (API Routes): Implementación de una API RESTful usando las API Routes de Next.js para gestionar productos y un carrito en memoria.
 
 Frontend (React/Next.js): Una interfaz de usuario interactiva para mostrar productos, agregar/eliminar/actualizar ítems en el carrito, y visualizar la mejor combinación de productos.
@@ -10,7 +10,7 @@ Lógica de Combinación Óptima: Una función que resuelve una versión simplifi
 
 Estilos Modernos: Uso de Tailwind CSS para un diseño responsivo y atractivo.
 
-📦 Estructura del Proyecto
+## Estructura del Proyecto
 El proyecto está organizado de la siguiente manera:
 
 app/: Contiene los componentes de React para el frontend y las rutas de la API (app/api).
@@ -29,11 +29,8 @@ lib/: Contiene la lógica central del carrito que es compartida por los endpoint
 
 lib/cart.ts: Funciones para getCart, addToCart y updateCartQuantity.
 
-utils/: Contiene funciones de utilidad que no son específicas de la UI o la API.
 
-utils/findBestCombination.ts: La implementación del algoritmo para encontrar la mejor combinación de productos.
-
-✨ Detalles de Implementación
+## Detalles de Implementación
 Parte 1: Backend (API)
 He implementado los siguientes endpoints utilizando las API Routes de Next.js (modelo app):
 
@@ -64,7 +61,7 @@ Un ícono de carrito en la cabecera muestra la cantidad total de ítems en el ca
 
 Diseño: Se utilizaron clases de Tailwind CSS para crear una interfaz básica pero limpia y responsiva, con énfasis en colores suaves y elementos interactivos.
 
-🛠️ Cómo Ejecutar el Proyecto
+## 🛠️ Cómo Ejecutar el Proyecto
 
 
 Si lo quieres ver  en la  web puedes  probarlo en el siguiente link [CarritoCompras](https://api-con-carrito-de-compras.onrender.com).
@@ -104,8 +101,8 @@ POST http://localhost:3000/api/cart con Body: raw (JSON) -> { "productId": 1 }
 
 PUT http://localhost:3000/api/cart con Body: raw (JSON) -> { "productId": 1, "quantity": 2 }
 
-🚀 Despliegue
+## 🚀 Despliegue
 Este proyecto está configurado para ser desplegado fácilmente en plataformas como Render. Para desplegar, se debe configurar un "Web Service" (no "Static Site") y usar los comandos de npm install && npm run build para la construcción y npm start para el inicio del servidor.
 
-🙏 Agradecimientos
-Agradezco la oportunidad de trabajar en esta prueba técnica.
+## 🙏 Agradecimientos
+Agradezco la oportunidad de presentar esta prueba técnica.
